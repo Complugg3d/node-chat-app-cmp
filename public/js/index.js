@@ -17,11 +17,15 @@ socket.on('disconnect', function () {
 
 socket.on('newMessage', function (msg) {
   var formatedTime = moment(msg.createdAt).format('h:mm a');
+  var template = jQuery('#message-template').html();
 
-  var li = jQuery('<li></li>');
-  li.text(`${msg.from} ${formatedTime}: ${msg.text}`);
+  var html = Mustache.render(template, {
+    text: msg.text,
+    from: msg.from,
+    createdAt: formatedTime
+  });
 
-  jQuery('#messages').append(li);
+  jQuery('#messages').append(html);
 });
 
 // socket.emit('createMessage', {
@@ -32,14 +36,16 @@ socket.on('newMessage', function (msg) {
 // });
 
 socket.on('newLocationMessage', function (message) {
-  var li = jQuery('<li></li>');
-  var a = jQuery('<a target="_blank">My Current location</a>');
   var formatedTime = moment(message.createdAt).format('h:mm a');
+  var template = jQuery('#location-message-template').html();
 
-  li.text(`${message.from} ${formatedTime}:`);
-  a.attr('href', message.url);
-  li.append(a);
-  jQuery('#messages').append(li);
+  var html = Mustache.render(template, {
+    createdAt: formatedTime,
+    from: message.from,
+    url: message.url
+  });
+
+  jQuery('#messages').append(html);
 });
 
 jQuery('#message-form').on('submit', function (e) {
