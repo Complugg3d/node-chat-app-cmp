@@ -1,3 +1,5 @@
+const _ = require('lodash');
+
 class Users {
   constructor() {
     this.users = [];
@@ -22,9 +24,15 @@ class Users {
   getUserList(room) {
     var users = this.users.filter((user) => user.room === room);
 
-    var namesArray = users.map((user) => user.name);
-    
-    return namesArray;
+    return users.map((user) => user.name);
+  }
+  getRoomsList(pattern){
+    var PATTERN = new RegExp(pattern);
+    var usersInRooms = this.users.filter((user) => PATTERN.test(user.room));
+    return _.uniqBy(usersInRooms, 'room').map((user) => user.room);
+  }
+  isUserInRoom(name, room) {
+    return _.find(this.users, { name, room });
   }
 }
 

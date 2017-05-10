@@ -68,4 +68,27 @@ describe('Users', () => {
 
     expect(userList).toEqual(['Ram']);
   });
+
+  it('should return a user if a user exist in a room', () => {
+    var result = users.isUserInRoom(users.users[0].name, users.users[0].room);
+    expect(result).toBe(users.users[0]);
+  });
+
+  it('should return null if a user do not exist in a room', () => {
+    var result = users.isUserInRoom(users.users[1].name, users.users[0].room);
+    expect(result).toNotExist();
+  });
+
+  it('should return the list of rooms based on a pattern', () => {
+    var roomsList = users.getRoomsList('Nod');
+
+    expect(roomsList.length).toBe(1);
+    expect(roomsList[0]).toBe(users.users[0].room);
+  });
+
+  it('should return empty array if not rooms match', () => {
+    var roomsList = users.getRoomsList('java');
+
+    expect(roomsList.length).toBe(0);
+  });
 });

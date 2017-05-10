@@ -23,7 +23,10 @@ io.on('connection', (socket) => {
 
     if(!isRealString(params.name) || !isRealString(params.room)) {
       return callback('Name and room name are required');
+    } else if (users.isUserInRoom(params.name, params.room)) {
+      return callback('User already in group please join another');
     }
+
     socket.join(params.room);
     users.removeUser(socket.id);
     users.addUser(socket.id, params.name, params.room);
@@ -37,6 +40,22 @@ io.on('connection', (socket) => {
 
     socket.broadcast.to(params.room).emit('newMessage', generateMessage('Admin', `${params.name} has joined`));
 
+    callback();
+  });
+
+  socket.on('roomSearch', (pattern, callback) => {
+    console.log(pattern);
+    callback(users.getRoomsList());
+  });
+
+  socket.on('privateMessage', (params, callback) => {
+    var user = users.isUserInRoom(params.messageTo, params.room);
+    var sender = users.getUser(socket.id);
+
+    io.to(user.id).emit('newPrivateMessage', {
+      from: sender.name,
+      msg:params.msg
+    });
     callback();
   });
   // socket.emit('newEmail', {

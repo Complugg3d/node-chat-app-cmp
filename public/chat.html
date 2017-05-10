@@ -4,7 +4,9 @@
     <meta charset="utf-8">
     <title>Chat | Chat app</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <link rel="stylesheet" href="/css/jquery-ui.min.css" />
     <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/css/chat.css">
   </head>
   <body class="chat">
 
@@ -23,6 +25,16 @@
         </form>
         <button id="send-location">Send location</button>
       </div>
+    </div>
+
+    <div id="dialog" title="Private Message">
+      <input type="text" name="input-pvt-msg"/>
+      <button type="button" id="btn-send-pvt-msg">send</button>
+    </div>
+    <div id="arrived-message" title="Message Arrived">
+      <p id="lbl-arrived-msg"></p>
+      <input type="text" name="input-pvt-msg-repply"/>
+      <button type="button" id="btn-send-pvt-msg-rpl">send</button>
     </div>
 
     <script type="text/template" id="message-template">
@@ -53,6 +65,7 @@
 
     <script src="/socket.io/socket.io.js"></script>
     <script src="/js/libs/jquery-3.2.1.min.js"></script>
+    <script src="/js/libs/jquery-ui.min.js"></script>
     <script src="/js/libs/moment.js"></script>
     <script src="/js/libs/mustache.js"></script>
     <script src="/js/libs/deparam.js"></script>

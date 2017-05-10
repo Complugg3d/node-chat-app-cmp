@@ -1,0 +1,16 @@
+.chat__sidebar li:hover {
+  cursor: pointer !important;
+  cursor: hand !important;
+}
+#dialog {
+  position: relative !important;
+  z-index: -100 !important;
+}
+
+.ui-dialog-titlebar {
+  background: linear-gradient(325deg,rgba(39,107,130,1) 0,rgba(49,84,129,1) 100%) !important;
+}
+
+.ui-dialog-title {
+  color: white;
+}

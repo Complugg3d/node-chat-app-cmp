@@ -10,6 +10,7 @@ function scrollToBottom () {
   var scrollHeight = messages.prop('scrollHeight');
   var newMessageHeight = newMessage.innerHeight();
   var lastMessageHeight = newMessage.prev().innerHeight();
+  var messageTo;
 
   if((clientHeight + scrollTop + newMessageHeight + lastMessageHeight) >= scrollHeight) {
     messages.scrollTop(scrollHeight);
@@ -41,9 +42,47 @@ socket.on('updateUserList', function (users) {
   console.log('usersList', users);
   var ol = jQuery('<ol></ol>');
   users.forEach(function (name) {
-    ol.append(jQuery('<li></li>').text(name));
+    ol.append(jQuery('<li class="user-in-room"></li>').text(name));
   });
   jQuery('#users').html(ol);
+});
+
+jQuery('#users').on('click', '.user-in-room', function() {
+    console.log("entered the function", this.innerText);
+    messageTo = this.innerText;
+    var params = jQuery.deparam(window.location.search);
+    if(messageTo === params.name) {
+      alert('You cannot send a message to yourself');
+    } else {      
+      privateDialog.dialog("open");
+    }
+});
+
+var repplyTo;
+
+socket.on('newPrivateMessage', function (params) {
+
+  jQuery('#lbl-arrived-msg').text(params.from + ': ' + params.msg);
+  repplyTo = params.from;
+  console.log(repplyTo);
+  arrivedMessageDialog.dialog("open");
+});
+
+jQuery('#btn-send-pvt-msg-rpl').on('click', function () {
+  var msg = jQuery("[name=input-pvt-msg-repply]").val();
+  var params = jQuery.deparam(window.location.search);
+  // console.log(msg);
+  console.log(msg + ' - ' + repplyTo + ' que hay');
+  socket.emit('privateMessage', {
+    messageTo: repplyTo,
+    room: params.room,
+    msg
+  }, function () {
+    console.log('entered callback');
+    arrivedMessageDialog.dialog("close");
+    repplyTo = '';
+    jQuery("[name=input-pvt-msg-repply]").val('');
+  });
 });
 
 // socket.on('newEmail', function (email) {
@@ -115,5 +154,30 @@ locationButton.on('click', function () {
   }, function () {
     locationButton.removeAttr('disabled').text('Send location');
     alert('Unable to fecth location');
+  });
+});
+
+var privateDialog = jQuery("#dialog").dialog({
+  appendTo: ".chat__main",
+  autoOpen: false
+});
+
+var arrivedMessageDialog = jQuery("#arrived-message").dialog({
+  appendTo: ".chat__main",
+  autoOpen: false
+});
+
+jQuery("#btn-send-pvt-msg").on("click", function () {
+  var msg = jQuery("[name=input-pvt-msg]").val();
+  var params = jQuery.deparam(window.location.search);
+  // console.log(msg);
+  socket.emit('privateMessage', {
+    messageTo,
+    room: params.room,
+    msg
+  }, function () {
+    console.log('entered callback');
+    privateDialog.dialog("close");
+    jQuery("[name=input-pvt-msg]").val('');
   });
 });
